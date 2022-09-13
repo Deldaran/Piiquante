@@ -1,34 +1,32 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const saucesRoutes = require('./routes/sauces')
 const userRoutes = require('./routes/user');
 
-const app = express();
 
-mongoose.connect('mongodb+srv://JorisFerrari:<Ferrari06>@cluster0.gn4neqo.mongodb.net/test',
+const app = express();
+app.use(express.json());
+
+app.use(cors())
+/*
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials','true')
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', '*');
+  next();
+});*/
+
+
+mongoose.connect('mongodb+srv://JorisFerrari:Yj32nx75@cluster0.gn4neqo.mongodb.net/test',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-app.use ((req, res, next) =>{
-    console.log('requête reçus');
-    next();
-});
 
-app.use((req, res, next) =>{
-    res.status(201);
-    next();
-});
-
-app.use((req, res, next) =>{
-    res.json({ message: 'Votre requête a bien était reçue'});
-});
-
-app.use ((req, res) =>{
-    console.log('requête reçus et réponse envoyer')
-});
-
+app.use('/api/sauces', saucesRoutes);
 app.use('/api/auth', userRoutes);
 
 module.exports= app;
