@@ -1,15 +1,15 @@
-const Thing = require('../models/Thing');
+const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
 exports.deleteSauce = (req, res, next) => {
-    Thing.findOne({ _id: req.params.id})
+    Sauce.findOne({ _id: req.params.id})
     .then(thing => {
         if (thing.userId != req.auth.userId) {
             res.status(401).json({message: 'Not authorized'});
         } else {
             const filename = thing.imageUrl.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
-                Thing.deleteOne({_id: req.params.id})
+                Sauce.deleteOne({_id: req.params.id})
                     .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
                     .catch(error => res.status(401).json({ error }));
             });
@@ -21,7 +21,7 @@ exports.deleteSauce = (req, res, next) => {
   };
   
   exports.getAllSauce = (req, res, next) => {
-    Thing.find().then(
+    Sauce.find().then(
       (things) => {
 
         res.status(200).json(things);
@@ -36,7 +36,7 @@ exports.deleteSauce = (req, res, next) => {
   };
 
 exports.getOneSauce = (req, res, next) => {
-    Thing.findOne({
+    Sauce.findOne({
       _id: req.params.id
     }).then(
       (thing) => {
@@ -55,7 +55,7 @@ exports.createSauce = (req, res, next)=>{
     console.log(req.body);
     const thingObject = JSON.parse(req.body.sauce);
     delete thingObject._id;
-    const sauce = new Thing({
+    const sauce = new Sauce({
         ...thingObject,
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
@@ -76,12 +76,12 @@ exports.createSauce = (req, res, next)=>{
     } : { ...req.body };
   
     delete thingObject._userId;
-    Thing.findOne({_id: req.params.id})
+    Sauce.findOne({_id: req.params.id})
         .then((thing) => {
             if (thing.userId != req.auth.userId) {
                 res.status(401).json({ message : 'Not authorized'});
             } else {
-                Thing.updateOne({ _id: req.params.id}, { ...thingObject, _id: req.params.id})
+                Sauce.updateOne({ _id: req.params.id}, { ...thingObject, _id: req.params.id})
                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
                 .catch(error => res.status(401).json({ error }));
             }
@@ -95,7 +95,7 @@ exports.createSauce = (req, res, next)=>{
   const userId = req.body.userId;
   const like = req.body.like;
   if (like === 1) {
-    Thing.updateOne(
+    Sauce.updateOne(
       { _id: sauceId },
       {
         $inc: { likes: like },
@@ -107,7 +107,7 @@ exports.createSauce = (req, res, next)=>{
   }
 
   else if (like === -1) {
-    Thing.updateOne(
+    Sauce.updateOne(
       { _id: sauceId },
       {
         $inc: { dislikes: -1 * like },
@@ -118,10 +118,10 @@ exports.createSauce = (req, res, next)=>{
       .catch((error) => res.status(500).json({ error }));
   }
   else {
-    Thing.findOne({ _id: sauceId })
+    Sauce.findOne({ _id: sauceId })
       .then((sauce) => {
         if (sauce.usersLiked.includes(userId)) {
-          Thing.updateOne(
+          Sauce.updateOne(
             { _id: sauceId },
             { $pull: { usersLiked: userId }, $inc: { likes: -1 } }
           )
@@ -130,7 +130,7 @@ exports.createSauce = (req, res, next)=>{
             })
             .catch((error) => res.status(500).json({ error }));
         } else if (sauce.usersDisliked.includes(userId)) {
-          Thing.updateOne(
+          Sauce.updateOne(
             { _id: sauceId },
             {
               $pull: { usersDisliked: userId },
