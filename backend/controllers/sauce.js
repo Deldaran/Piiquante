@@ -52,7 +52,6 @@ exports.getOneSauce = (req, res, next) => {
   };
 
 exports.createSauce = (req, res, next)=>{
-    console.log(req.body);
     const thingObject = JSON.parse(req.body.sauce);
     delete thingObject._id;
     const sauce = new Sauce({
