@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const MongooseErrors = require('mongoose-errors');
 
-
+//model sauce
 const sauceSchema = mongoose.Schema({
     userId: {type: String, require: true},
     name:{type: String, require: true},

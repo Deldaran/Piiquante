@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+//créer un token pour chaque utilisateur 
 module.exports = (req,res,next) =>{
     try{
         const token = req.headers.authorization.split(' ')[1];

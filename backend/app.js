@@ -9,6 +9,7 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 
+//Permet d'éviter les erreurs dû au CORS et au source différente 
 app.use(cors())
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,7 +19,7 @@ app.use((req, res, next) => {
   next();
 })
 
-
+//Permet la connection au server Mongodb
 mongoose.connect('mongodb+srv://JorisFerrari:Yj32nx75@cluster0.gn4neqo.mongodb.net/test',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -26,7 +27,7 @@ mongoose.connect('mongodb+srv://JorisFerrari:Yj32nx75@cluster0.gn4neqo.mongodb.n
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 
-
+//execute les routes
 app.use('/api/sauces', saucesRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
